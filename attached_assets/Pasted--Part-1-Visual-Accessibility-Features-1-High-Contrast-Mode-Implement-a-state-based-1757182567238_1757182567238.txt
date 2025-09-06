@@ -1,0 +1,33 @@
+**Part 1: Visual Accessibility Features**
+
+1.  **High-Contrast Mode:**
+    * Implement a state-based theme toggle button, located in the navigation bar.
+    * The button should switch the entire application's color scheme between the default theme and a high-contrast theme.
+    * The high-contrast theme should use a dark background with bright, contrasting text and a bold accent color.
+
+2.  **Font Size Adjustment:**
+    * Create two buttons in the navigation bar: one for "Increase Font Size" (e.g., A+) and one for "Decrease Font Size" (e.g., A-).
+    * These buttons should dynamically adjust the base font size for the entire application, making all text scalable.
+
+3.  **Descriptive Alt Text:**
+    * Review all images and icons in the UI, including the `Dashboard`, `Upload`, `Results`, and `History` icons.
+    * Ensure that every visual element has a descriptive `alt` attribute or an `aria-label` for screen reader compatibility.
+
+**Part 2: Navigational Accessibility**
+
+1.  **Visible Focus States:**
+    * Ensure that all interactive elements, including buttons and navigation links, have a clearly visible focus state.
+    * When an element is selected via keyboard navigation (using the Tab key), it should have a noticeable outline or a distinct visual highlight.
+    * Use the `:focus` pseudo-class in the CSS to define this style.
+
+**Part 3: Error and Feedback Handling**
+
+1.  **Clear Error Messages:**
+    * Implement a system for displaying clear, user-friendly error messages.
+    * When an upload fails or the AI analysis returns an error, display a message that is easy to understand, avoiding technical jargon (e.g., "Upload failed: Please check your network connection and try again.").
+    * The error message should be visually prominent, possibly using a red background or an icon.
+
+2.  **Audio Feedback:**
+    * Integrate a simple audio feedback system.
+    * Play a distinct, short success sound when a classification is completed successfully.
+    * Play a different, distinct sound for any error or failed action, such as a failed image upload.
