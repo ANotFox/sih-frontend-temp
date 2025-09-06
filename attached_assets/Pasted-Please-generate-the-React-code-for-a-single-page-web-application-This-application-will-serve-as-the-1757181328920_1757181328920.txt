@@ -1,0 +1,34 @@
+Please generate the React code for a single-page web application. This application will serve as the user interface for an AI-based Animal Type Classification system.
+
+**Project Name:** AI-ATC System Frontend
+
+**Purpose:** The website's main function is to allow field personnel to upload images of cattle and buffaloes, display the results of an AI analysis, and prepare the data for transfer.
+
+**Target User:** Field personnel with minimal technical skills. The design must be extremely user-friendly and intuitive.
+
+**Visual Style:** Clean, professional, and trustworthy. Use a simple color palette, primarily white, with a government-official or science-oriented accent color (like a deep blue or green). The typography should be clear and readable on mobile devices.
+
+**Key Features & User Flow:**
+1.  **Home/Dashboard:**
+    * A simple landing page that explains the purpose of the app.
+    * Display a summary of recent successful classifications.
+2.  **Image Upload Page/Component:**
+    * A large, clearly labeled button to "Upload Image" or "Take Photo."
+    * A display area to show the uploaded image preview.
+    * A button to "Submit for Analysis."
+3.  **Results Display Page/Component:**
+    * Display the analyzed image, potentially with key measurement points overlaid.
+    * A section to show the extracted parameters with labels (e.g., "Height at Withers," "Body Length," "Rump Angle").
+    * A "Classification Score" displayed prominently.
+    * A button to "Save Record" or "Finalize."
+4.  **History/Records Page (Optional but useful):**
+    * A list or grid view of all past classification records. Each item should show a thumbnail of the animal and its final score.
+
+**Technical Stack:**
+* Use the **React framework**.
+* Structure the application using **functional components** and **React Hooks** (e.g., `useState`, `useEffect`).
+* Use **JSX** for the UI structure and standard CSS for styling.
+* Ensure the entire application is **fully responsive** and works perfectly on mobile phones, as field personnel will likely use these devices.
+* **Do not include any server-side logic.** The front-end should focus solely on the UI, with placeholder functionality for the API calls (e.g., the "Submit for Analysis" button would simulate a successful response).
+
+**Tone:** The text and labels should be simple, direct, and action-oriented. For example, use "Upload Photo" instead of "Initiate Image Upload."
