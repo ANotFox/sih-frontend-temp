@@ -3,15 +3,17 @@ import { useLocation } from "wouter";
 import { UploadZone } from "@/components/upload/upload-zone";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Upload() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleAnalysisComplete = (resultId: string) => {
     toast({
-      title: "Analysis Complete",
-      description: "Your image has been successfully analyzed.",
+      title: t('toast.analysisComplete'),
+      description: t('toast.analysisCompleteDesc'),
     });
     setLocation(`/results/${resultId}`);
   };
@@ -20,10 +22,10 @@ export default function Upload() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-4 font-serif" data-testid="upload-title">
-          Upload Animal Image
+          {t('upload.title')}
         </h1>
         <p className="text-lg text-muted-foreground" data-testid="upload-description">
-          Take a clear photo of the animal or upload from your device. Ensure the full body is visible for accurate analysis.
+          {t('upload.description')}
         </p>
       </div>
 
@@ -33,12 +35,12 @@ export default function Upload() {
         {/* Instructions */}
         <Card className="mt-6">
           <CardContent className="p-4">
-            <h4 className="font-semibold mb-2">For best results:</h4>
+            <h4 className="font-semibold mb-2">{t('upload.bestResults')}</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Ensure the animal is standing upright</li>
-              <li>• Capture the full body from a side view</li>
-              <li>• Use good lighting conditions</li>
-              <li>• Avoid blurry or distorted images</li>
+              <li>• {t('upload.standing')}</li>
+              <li>• {t('upload.fullBody')}</li>
+              <li>• {t('upload.goodLighting')}</li>
+              <li>• {t('upload.avoidBlurry')}</li>
             </ul>
           </CardContent>
         </Card>

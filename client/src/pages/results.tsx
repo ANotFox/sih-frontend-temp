@@ -7,10 +7,12 @@ import { ClassificationScore } from "@/components/results/classification-score";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ClassificationRecord } from "@shared/schema";
 import { Save, Plus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Results() {
   const [match, params] = useRoute("/results/:id?");
   const recordId = params?.id;
+  const { t } = useLanguage();
 
   const { data: record, isLoading, error } = useQuery<ClassificationRecord>({
     queryKey: ['/api/classifications', recordId],
@@ -21,11 +23,11 @@ export default function Results() {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground" data-testid="no-results-message">
-          No analysis results to display. Please upload an image first.
+          {t('results.noResults')}
         </p>
         <Link href="/upload">
           <Button className="mt-4" data-testid="button-upload-image">
-            Upload Image
+            {t('results.uploadFirst')}
           </Button>
         </Link>
       </div>
@@ -54,10 +56,10 @@ export default function Results() {
     return (
       <div className="text-center py-12">
         <p className="text-destructive mb-4" data-testid="error-message">
-          Failed to load analysis results. Please try again.
+          {t('results.errorMessage')}
         </p>
         <Link href="/upload">
-          <Button data-testid="button-retry-upload">Try Again</Button>
+          <Button data-testid="button-retry-upload">{t('results.tryAgain')}</Button>
         </Link>
       </div>
     );
@@ -69,10 +71,10 @@ export default function Results() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-4 font-serif" data-testid="results-title">
-          Classification Results
+          {t('results.title')}
         </h1>
         <p className="text-lg text-muted-foreground" data-testid="results-description">
-          Analysis complete. Review the measurements and classification score below.
+          {t('results.description')}
         </p>
       </div>
 
@@ -80,7 +82,7 @@ export default function Results() {
         {/* Image with Measurement Points */}
         <Card>
           <CardContent className="p-6">
-            <h3 className="text-xl font-semibold mb-4 font-serif">Analyzed Image</h3>
+            <h3 className="text-xl font-semibold mb-4 font-serif">{t('results.analyzedImage')}</h3>
             <MeasurementOverlay 
               imageUrl={record.imageUrl} 
               measurementPoints={record.measurementPoints as any[]} 
@@ -100,36 +102,36 @@ export default function Results() {
           {/* Extracted Parameters */}
           <Card>
             <CardContent className="p-6">
-              <h3 className="text-xl font-semibold mb-4 font-serif">Measurements</h3>
+              <h3 className="text-xl font-semibold mb-4 font-serif">{t('results.measurements')}</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center py-2 border-b border-border">
-                  <span className="font-medium">Height at Withers</span>
+                  <span className="font-medium">{t('results.heightAtWithers')}</span>
                   <span className="text-muted-foreground" data-testid="measurement-height">
-                    {measurements.heightAtWithers} cm
+                    {measurements.heightAtWithers} {t('common.cm')}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-border">
-                  <span className="font-medium">Body Length</span>
+                  <span className="font-medium">{t('results.bodyLength')}</span>
                   <span className="text-muted-foreground" data-testid="measurement-length">
-                    {measurements.bodyLength} cm
+                    {measurements.bodyLength} {t('common.cm')}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-border">
-                  <span className="font-medium">Rump Angle</span>
+                  <span className="font-medium">{t('results.rumpAngle')}</span>
                   <span className="text-muted-foreground" data-testid="measurement-angle">
-                    {measurements.rumpAngle}°
+                    {measurements.rumpAngle}{t('common.degrees')}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-border">
-                  <span className="font-medium">Body Condition Score</span>
+                  <span className="font-medium">{t('results.bodyConditionScore')}</span>
                   <span className="text-muted-foreground" data-testid="measurement-condition">
                     {measurements.bodyConditionScore}/5
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                  <span className="font-medium">Estimated Weight</span>
+                  <span className="font-medium">{t('results.estimatedWeight')}</span>
                   <span className="text-muted-foreground" data-testid="measurement-weight">
-                    {measurements.estimatedWeight} kg
+                    {measurements.estimatedWeight} {t('common.kg')}
                   </span>
                 </div>
               </div>
@@ -140,12 +142,12 @@ export default function Results() {
           <div className="flex flex-col sm:flex-row gap-3">
             <Button className="flex-1 bg-chart-2 hover:bg-chart-2/90" data-testid="button-save-record">
               <Save className="mr-2 h-4 w-4" />
-              Save Record
+              {t('results.saveRecord')}
             </Button>
             <Link href="/upload">
               <Button variant="outline" className="flex-1 w-full" data-testid="button-new-analysis">
                 <Plus className="mr-2 h-4 w-4" />
-                New Analysis
+                {t('results.newAnalysis')}
               </Button>
             </Link>
           </div>

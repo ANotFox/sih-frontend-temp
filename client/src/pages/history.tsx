@@ -7,10 +7,12 @@ import { RecordCard } from "@/components/history/record-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ClassificationRecord } from "@shared/schema";
 import { Download, History as HistoryIcon } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function History() {
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [timeFilter, setTimeFilter] = useState<string>("30");
+  const { t } = useLanguage();
 
   const { data: records, isLoading, error } = useQuery<ClassificationRecord[]>({
     queryKey: ['/api/classifications'],
@@ -66,10 +68,10 @@ export default function History() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-4 font-serif" data-testid="history-title">
-          Classification History
+          {t('history.title')}
         </h1>
         <p className="text-lg text-muted-foreground" data-testid="history-description">
-          View and manage all past animal classifications. Export data or review individual records.
+          {t('history.description')}
         </p>
       </div>
 
@@ -81,10 +83,10 @@ export default function History() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="dairy">Dairy Cow</SelectItem>
-              <SelectItem value="beef">Beef Cattle</SelectItem>
-              <SelectItem value="buffalo">Buffalo</SelectItem>
+              <SelectItem value="all">{t('history.allTypes')}</SelectItem>
+              <SelectItem value="dairy">{t('history.dairyCow')}</SelectItem>
+              <SelectItem value="beef">{t('history.beefCattle')}</SelectItem>
+              <SelectItem value="buffalo">{t('history.buffalo')}</SelectItem>
             </SelectContent>
           </Select>
           
@@ -93,10 +95,10 @@ export default function History() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="7">Last 7 days</SelectItem>
-              <SelectItem value="30">Last 30 days</SelectItem>
-              <SelectItem value="90">Last 90 days</SelectItem>
-              <SelectItem value="all">All time</SelectItem>
+              <SelectItem value="7">{t('history.last7Days')}</SelectItem>
+              <SelectItem value="30">{t('history.last30Days')}</SelectItem>
+              <SelectItem value="90">{t('history.last90Days')}</SelectItem>
+              <SelectItem value="all">{t('history.allTime')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -108,7 +110,7 @@ export default function History() {
           data-testid="button-export-data"
         >
           <Download className="mr-2 h-4 w-4" />
-          Export Data
+          {t('history.exportData')}
         </Button>
       </div>
 
@@ -130,7 +132,7 @@ export default function History() {
       ) : error ? (
         <div className="text-center py-12">
           <p className="text-destructive" data-testid="error-message">
-            Failed to load classification history. Please try again.
+            {t('history.errorLoading')}
           </p>
         </div>
       ) : filteredRecords.length === 0 ? (
@@ -138,8 +140,8 @@ export default function History() {
           <HistoryIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
           <p className="text-muted-foreground" data-testid="no-records-message">
             {records?.length === 0 
-              ? "No classifications yet. Start by uploading your first image!"
-              : "No records match the selected filters. Try adjusting your search criteria."
+              ? t('history.noRecords')
+              : t('history.noMatches')
             }
           </p>
         </div>
@@ -155,7 +157,7 @@ export default function History() {
           {filteredRecords.length >= 20 && (
             <div className="text-center mt-8">
               <Button variant="outline" data-testid="button-load-more">
-                Load More Records
+                {t('history.loadMore')}
               </Button>
             </div>
           )}

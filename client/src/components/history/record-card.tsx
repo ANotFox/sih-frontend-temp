@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ClassificationRecord } from "@shared/schema";
 import { format } from "date-fns";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface RecordCardProps {
   record: ClassificationRecord;
@@ -10,6 +11,7 @@ interface RecordCardProps {
 
 export function RecordCard({ record }: RecordCardProps) {
   const formattedDate = format(new Date(record.createdAt), "MMM dd, yyyy • HH:mm");
+  const { t } = useLanguage();
 
   return (
     <Card data-testid={`record-card-${record.id}`}>
@@ -29,7 +31,7 @@ export function RecordCard({ record }: RecordCardProps) {
           {record.animalType}
         </h4>
         <p className="text-sm text-muted-foreground mb-2" data-testid={`record-score-${record.id}`}>
-          Score: {record.classificationScore.toFixed(1)}%
+          {t('dashboard.score')}: {record.classificationScore.toFixed(1)}%
         </p>
         <p className="text-xs text-muted-foreground mb-3" data-testid={`record-date-${record.id}`}>
           {formattedDate}
@@ -40,7 +42,7 @@ export function RecordCard({ record }: RecordCardProps) {
             className="w-full text-sm"
             data-testid={`button-view-details-${record.id}`}
           >
-            View Details
+            {t('history.viewDetails')}
           </Button>
         </Link>
       </CardContent>

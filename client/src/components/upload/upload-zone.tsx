@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CloudUpload, Camera, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface UploadZoneProps {
   onAnalysisComplete: (resultId: string) => void;
@@ -15,6 +16,7 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const analyzeImageMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -53,16 +55,16 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
       })
       .catch(() => {
         toast({
-          title: "Error",
-          description: "Failed to save analysis results",
+          title: t('toast.saveError'),
+          description: t('toast.saveErrorDesc'),
           variant: "destructive",
         });
       });
     },
     onError: () => {
       toast({
-        title: "Analysis Failed", 
-        description: "Failed to analyze the image. Please try again.",
+        title: t('toast.analysisFailed'), 
+        description: t('toast.analysisFailedDesc'),
         variant: "destructive",
       });
     },
@@ -71,8 +73,8 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
   const handleFileSelect = useCallback((file: File) => {
     if (!file.type.startsWith('image/')) {
       toast({
-        title: "Invalid File",
-        description: "Please select an image file",
+        title: t('toast.invalidFile'),
+        description: t('toast.invalidFileDesc'),
         variant: "destructive",
       });
       return;
@@ -126,8 +128,8 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
   const handleCameraClick = () => {
     // In a real implementation, this would open the camera
     toast({
-      title: "Camera Feature",
-      description: "Camera functionality would be implemented here for mobile devices",
+      title: t('toast.cameraFeature'),
+      description: t('toast.cameraFeatureDesc'),
     });
   };
 
@@ -162,8 +164,8 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
         <div className="space-y-4" data-testid="loading-state">
           <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary" />
           <div>
-            <p className="text-lg font-medium">Analyzing image...</p>
-            <p className="text-muted-foreground">Please wait while our AI processes the image</p>
+            <p className="text-lg font-medium">{t('upload.analyzing')}</p>
+            <p className="text-muted-foreground">{t('upload.analyzeWait')}</p>
           </div>
         </div>
       ) : previewUrl ? (
@@ -181,7 +183,7 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
               data-testid="button-analyze"
             >
               <Loader2 className="mr-2 h-4 w-4" />
-              Submit for Analysis
+              {t('upload.submitAnalysis')}
             </Button>
             <Button 
               variant="outline" 
@@ -189,7 +191,7 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
               data-testid="button-clear"
             >
               <X className="mr-2 h-4 w-4" />
-              Clear
+              {t('upload.clear')}
             </Button>
           </div>
         </div>
@@ -197,13 +199,13 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
         <div className="space-y-4" data-testid="upload-prompt">
           <CloudUpload className="h-16 w-16 mx-auto text-muted-foreground" />
           <div>
-            <p className="text-lg font-medium">Upload Image or Take Photo</p>
-            <p className="text-muted-foreground">Drag and drop an image here, or click to select</p>
+            <p className="text-lg font-medium">{t('upload.uploadPrompt')}</p>
+            <p className="text-muted-foreground">{t('upload.dragDropPrompt')}</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button onClick={handleUploadClick} data-testid="button-upload">
               <CloudUpload className="mr-2 h-4 w-4" />
-              Choose File
+              {t('upload.chooseFile')}
             </Button>
             <Button 
               variant="secondary" 
@@ -211,7 +213,7 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
               data-testid="button-camera"
             >
               <Camera className="mr-2 h-4 w-4" />
-              Take Photo
+              {t('upload.takePhoto')}
             </Button>
           </div>
         </div>

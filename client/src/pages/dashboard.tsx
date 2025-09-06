@@ -4,8 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Camera, BarChart3, History } from "lucide-react";
 import { ClassificationRecord } from "@shared/schema";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const { data: recentClassifications, isLoading } = useQuery<ClassificationRecord[]>({
     queryKey: ['/api/classifications', { limit: '3' }],
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -15,11 +17,10 @@ export default function Dashboard() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-4 font-serif" data-testid="dashboard-title">
-          Animal Type Classification System
+          {t('dashboard.title')}
         </h1>
         <p className="text-lg text-muted-foreground max-w-3xl" data-testid="dashboard-description">
-          Welcome to the AI-powered Animal Type Classification system. Upload images of cattle and buffaloes 
-          to get instant analysis with detailed measurements and classification scores.
+          {t('dashboard.description')}
         </p>
       </div>
 
@@ -29,12 +30,12 @@ export default function Dashboard() {
           <CardContent className="p-6">
             <div className="flex items-center space-x-3 mb-4">
               <Camera className="h-8 w-8 text-primary" />
-              <h3 className="text-xl font-semibold font-serif">New Classification</h3>
+              <h3 className="text-xl font-semibold font-serif">{t('dashboard.newClassification')}</h3>
             </div>
-            <p className="text-muted-foreground mb-4">Start a new animal classification by uploading an image.</p>
+            <p className="text-muted-foreground mb-4">{t('dashboard.newClassificationDesc')}</p>
             <Link href="/upload">
               <Button className="w-full" data-testid="button-new-classification">
-                Upload Image
+                {t('dashboard.uploadImage')}
               </Button>
             </Link>
           </CardContent>
@@ -44,12 +45,12 @@ export default function Dashboard() {
           <CardContent className="p-6">
             <div className="flex items-center space-x-3 mb-4">
               <BarChart3 className="h-8 w-8 text-chart-2" />
-              <h3 className="text-xl font-semibold font-serif">View History</h3>
+              <h3 className="text-xl font-semibold font-serif">{t('dashboard.viewHistory')}</h3>
             </div>
-            <p className="text-muted-foreground mb-4">Review past classifications and export data.</p>
+            <p className="text-muted-foreground mb-4">{t('dashboard.viewHistoryDesc')}</p>
             <Link href="/history">
               <Button variant="secondary" className="w-full" data-testid="button-view-history">
-                View Records
+                {t('dashboard.viewRecords')}
               </Button>
             </Link>
           </CardContent>
@@ -60,7 +61,7 @@ export default function Dashboard() {
       <Card>
         <CardContent className="p-6">
           <h3 className="text-xl font-semibold mb-4 font-serif" data-testid="recent-classifications-title">
-            Recent Classifications
+            {t('dashboard.recentClassifications')}
           </h3>
           {isLoading ? (
             <div className="space-y-3">
@@ -89,7 +90,7 @@ export default function Dashboard() {
                   <div>
                     <p className="font-medium" data-testid={`text-animal-type-${record.id}`}>{record.animalType}</p>
                     <p className="text-sm text-muted-foreground" data-testid={`text-score-${record.id}`}>
-                      Score: {record.classificationScore.toFixed(1)}%
+                      {t('dashboard.score')}: {record.classificationScore.toFixed(1)}%
                     </p>
                   </div>
                 </div>
@@ -98,7 +99,7 @@ export default function Dashboard() {
           ) : (
             <div className="text-center py-8 text-muted-foreground" data-testid="no-classifications-message">
               <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No classifications yet. Start by uploading your first image!</p>
+              <p>{t('dashboard.noClassifications')}</p>
             </div>
           )}
         </CardContent>
