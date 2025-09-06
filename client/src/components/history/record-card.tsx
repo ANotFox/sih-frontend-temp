@@ -19,7 +19,7 @@ export function RecordCard({ record }: RecordCardProps) {
         <div className="aspect-square mb-3 overflow-hidden rounded-md">
           <img 
             src={record.imageUrl} 
-            alt={record.animalType} 
+            alt={`${record.animalType} classification from ${formattedDate} with ${record.classificationScore.toFixed(1)}% score`} 
             className="w-full h-full object-cover"
             onError={(e) => {
               (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1560114928-40f1f1eb26a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300';

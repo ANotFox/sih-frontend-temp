@@ -1,10 +1,13 @@
 import { useState, useRef, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { CloudUpload, Camera, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAccessibility } from "@/contexts/AccessibilityContext";
+import { audioFeedback } from "@/lib/audio-feedback";
 
 interface UploadZoneProps {
   onAnalysisComplete: (resultId: string) => void;
@@ -14,9 +17,11 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
   const [dragOver, setDragOver] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { audioFeedbackEnabled } = useAccessibility();
 
   const analyzeImageMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -51,9 +56,16 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
       })
       .then(response => response.json())
       .then(record => {
+        if (audioFeedbackEnabled) {
+          audioFeedback.playSuccess();
+        }
         onAnalysisComplete(record.id);
       })
       .catch(() => {
+        if (audioFeedbackEnabled) {
+          audioFeedback.playError();
+        }
+        setError("Unable to save analysis results. Please check your connection and try again.");
         toast({
           title: t('toast.saveError'),
           description: t('toast.saveErrorDesc'),
@@ -61,10 +73,24 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
         });
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      if (audioFeedbackEnabled) {
+        audioFeedback.playError();
+      }
+      let errorMessage = "Analysis failed. Please check your connection and try again.";
+      
+      if (error?.message?.includes('network')) {
+        errorMessage = "Network error. Please check your internet connection and try again.";
+      } else if (error?.message?.includes('size')) {
+        errorMessage = "File too large. Please choose an image smaller than 10MB.";
+      } else if (error?.message?.includes('format')) {
+        errorMessage = "Invalid file format. Please upload a valid image file (JPG, PNG, etc.).";
+      }
+      
+      setError(errorMessage);
       toast({
         title: t('toast.analysisFailed'), 
-        description: t('toast.analysisFailedDesc'),
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -72,13 +98,21 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
 
   const handleFileSelect = useCallback((file: File) => {
     if (!file.type.startsWith('image/')) {
+      if (audioFeedbackEnabled) {
+        audioFeedback.playError();
+      }
+      const errorMsg = "Please select a valid image file (JPG, PNG, GIF, etc.).";
+      setError(errorMsg);
       toast({
         title: t('toast.invalidFile'),
-        description: t('toast.invalidFileDesc'),
+        description: errorMsg,
         variant: "destructive",
       });
       return;
     }
+    
+    // Clear any previous errors
+    setError(null);
 
     setSelectedFile(file);
     const url = URL.createObjectURL(file);
@@ -115,6 +149,7 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
   const handleClear = useCallback(() => {
     setSelectedFile(null);
     setPreviewUrl("");
+    setError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -123,6 +158,13 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleUploadClick();
+    }
   };
 
   const handleCameraClick = () => {
@@ -140,17 +182,32 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
   };
 
   return (
-    <div
-      className={cn(
-        "upload-zone border-2 border-dashed border-border bg-card p-8 rounded-lg text-center transition-all duration-300",
-        dragOver && "border-primary bg-accent",
-        "hover:border-primary hover:bg-muted"
+    <div className="space-y-4">
+      {error && (
+        <ErrorMessage
+          message={error}
+          onDismiss={() => setError(null)}
+          actionLabel="Try Again"
+          onAction={handleClear}
+        />
       )}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      data-testid="upload-zone"
-    >
+      
+      <div
+        className={cn(
+          "upload-zone border-2 border-dashed border-border bg-card p-8 rounded-lg text-center transition-all duration-300",
+          dragOver && "border-primary bg-accent",
+          "hover:border-primary hover:bg-muted"
+        )}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        onKeyDown={handleKeyDown}
+        onClick={handleUploadClick}
+        data-testid="upload-zone"
+        role="button"
+        tabIndex={0}
+        aria-label="Upload zone for animal images - click, drag and drop, or press Enter to select files"
+      >
       <input
         ref={fileInputRef}
         type="file"
@@ -162,7 +219,7 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
 
       {analyzeImageMutation.isPending ? (
         <div className="space-y-4" data-testid="loading-state">
-          <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary" />
+          <Loader2 className="h-12 w-12 mx-auto animate-spin text-primary" aria-hidden="true" />
           <div>
             <p className="text-lg font-medium">{t('upload.analyzing')}</p>
             <p className="text-muted-foreground">{t('upload.analyzeWait')}</p>
@@ -172,7 +229,7 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
         <div className="space-y-4" data-testid="image-preview">
           <img 
             src={previewUrl} 
-            alt="Preview" 
+            alt="Preview of uploaded animal image ready for AI analysis" 
             className="max-w-full max-h-64 mx-auto rounded-lg"
             data-testid="preview-image"
           />
@@ -197,7 +254,7 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
         </div>
       ) : (
         <div className="space-y-4" data-testid="upload-prompt">
-          <CloudUpload className="h-16 w-16 mx-auto text-muted-foreground" />
+          <CloudUpload className="h-16 w-16 mx-auto text-muted-foreground" aria-hidden="true" />
           <div>
             <p className="text-lg font-medium">{t('upload.uploadPrompt')}</p>
             <p className="text-muted-foreground">{t('upload.dragDropPrompt')}</p>
@@ -218,6 +275,7 @@ export function UploadZone({ onAnalysisComplete }: UploadZoneProps) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

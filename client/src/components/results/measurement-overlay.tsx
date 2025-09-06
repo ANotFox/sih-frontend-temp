@@ -11,7 +11,7 @@ export function MeasurementOverlay({ imageUrl, measurementPoints, animalType }: 
     <div className="relative inline-block w-full" data-testid="measurement-overlay">
       <img 
         src={imageUrl} 
-        alt={`Analyzed ${animalType} image`} 
+        alt={`Analyzed ${animalType} showing measurement points for classification analysis`} 
         className="w-full rounded-lg"
         onError={(e) => {
           (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1560114928-40f1f1eb26a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400';

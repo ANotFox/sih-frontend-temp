@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { LanguageToggle } from "@/components/ui/language-toggle";
+import { AccessibilityControls } from "@/components/ui/accessibility-controls";
 import { Microscope, Home, Camera, BarChart3, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -43,14 +44,16 @@ export function Header() {
                         isActive && "bg-primary text-primary-foreground"
                       )}
                       data-testid={`nav-${item.name.toLowerCase()}`}
+                      aria-label={`Navigate to ${item.name}`}
                     >
-                      <item.icon className="mr-2 h-4 w-4" />
+                      <item.icon className="mr-2 h-4 w-4" aria-hidden="true" />
                       <span className="hidden sm:inline">{item.name}</span>
                     </Button>
                   </Link>
                 );
               })}
             </nav>
+            <AccessibilityControls />
             <LanguageToggle />
           </div>
         </div>
